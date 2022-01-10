@@ -8,10 +8,11 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Connection, Like, Repository, SelectQueryBuilder } from 'typeorm';
 import { Service } from 'src/service-catalog/entity/service.entity';
 import { Version } from 'src/service-catalog/entity/version.entity';
-import CreateServiceDto from 'src/service-catalog/dto/createServiceDto';
 import GetServiceResponseDto from './dto/getVersionResponseDto';
 import { classToPlain, instanceToPlain, plainToClass } from 'class-transformer';
 import CreateVersionDto from './dto/createVersionDto';
+import CreateServiceDto from './dto/createServiceDto';
+import GetVersionResponseDto from './dto/getVersionResponseDto';
 
 @Injectable()
 export class ServiceCatalogService {
@@ -45,6 +46,10 @@ export class ServiceCatalogService {
       skip: offset,
       take: limit,
     });
+
+    if(services.length < 1) {
+      throw new NotFoundException();
+    }
 
     return services;
   }
@@ -97,6 +102,15 @@ export class ServiceCatalogService {
       },
       relations: ['versions'],
     });
+
+    if (!serviceToUpdate) {
+      throw new NotFoundException();
+    }
+
+    await this.versionRepository.query(
+      'UPDATE VERSION set "isActive"=false where "serviceId"=' +
+        serviceToUpdate.id,
+    );
 
     const newVersion = new Version();
     newVersion.versionNumber = versionDetails.version;

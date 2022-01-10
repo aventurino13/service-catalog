@@ -39,7 +39,7 @@ export class ServiceCatalogController {
     return this.serviceCatalogService.getRecentServices();
   }
 
-  //GET /service-catalog/recent
+  //GET /service-catalog/paginated
   @Get('/paginated')
   getPaginatedServices(
     @Query() { offset, limit }: PaginationParams,
@@ -52,7 +52,7 @@ export class ServiceCatalogController {
     return this.serviceCatalogService.getAllServices();
   }
 
-  @Post()
+  @Post('/service')
   createService(
     @Body(new ValidationPipe()) service: CreateServiceDto,
   ): Promise<Service> {
