@@ -9,7 +9,7 @@ import { Connection, Like, Repository, SelectQueryBuilder } from 'typeorm';
 import { Service } from 'src/service-catalog/entity/service.entity';
 import { Version } from 'src/service-catalog/entity/version.entity';
 import CreateServiceDto from 'src/service-catalog/dto/createServiceDto';
-import GetServiceResponseDto from './dto/getServiceResponseDto';
+import GetServiceResponseDto from './dto/getVersionResponseDto';
 import { classToPlain, instanceToPlain, plainToClass } from 'class-transformer';
 import CreateVersionDto from './dto/createVersionDto';
 
@@ -34,23 +34,47 @@ export class ServiceCatalogService {
     });
   }
 
+  async getPaginatedServices(
+    offset?: number,
+    limit?: number,
+  ): Promise<Service[]> {
+    const services = await this.serviceRepository.find({
+      order: {
+        created_date: 'ASC',
+      },
+      skip: offset,
+      take: limit,
+    });
+
+    return services;
+  }
+
   async getServiceById(serviceId: number): Promise<Service> {
-    return await this.serviceRepository.findOne({
+    const matchedService = await this.serviceRepository.findOne({
       where: {
         id: serviceId,
       },
       relations: ['versions'],
     });
+
+    if (!matchedService) {
+      throw new NotFoundException();
+    }
+    return matchedService;
   }
 
   async getServiceByName(searchName: string): Promise<Service[]> {
-    return await this.serviceRepository.find({
+    const matchedService = await this.serviceRepository.find({
       where: {
         name: Like('%' + searchName + '%'),
       },
       relations: ['versions'],
     });
 
+    if (matchedService.length < 1) {
+      throw new NotFoundException();
+    }
+    return matchedService;
   }
 
   async create(serviceDetails: CreateServiceDto): Promise<Service> {

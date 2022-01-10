@@ -6,12 +6,14 @@ import {
   ParseIntPipe,
   Post,
   ValidationPipe,
+  Query,
 } from '@nestjs/common';
 import CreateServiceDto from 'src/service-catalog/dto/createServiceDto';
-import GetServiceResponseDto from 'src/service-catalog/dto/getServiceResponseDto';
+import GetServiceResponseDto from 'src/service-catalog/dto/getVersionResponseDto';
+import CreateVersionDto from './dto/createVersionDto';
+import PaginationParams from './dto/paginationParamsDto';
 import { Service } from 'src/service-catalog/entity/service.entity';
 import { Version } from 'src/service-catalog/entity/version.entity';
-import CreateVersionDto from './dto/createVersionDto';
 import { ServiceCatalogService } from './service-catalog.service';
 
 @Controller('service-catalog')
@@ -31,9 +33,18 @@ export class ServiceCatalogController {
     return this.serviceCatalogService.getServiceByName(name);
   }
 
+  //GET /service-catalog/recent
   @Get('/recent')
   getRecentServices(): Promise<Service[]> {
     return this.serviceCatalogService.getRecentServices();
+  }
+
+  //GET /service-catalog/recent
+  @Get('/paginated')
+  getPaginatedServices(
+    @Query() { offset, limit }: PaginationParams,
+  ): Promise<Service[]> {
+    return this.serviceCatalogService.getPaginatedServices(offset, limit);
   }
 
   @Get()
