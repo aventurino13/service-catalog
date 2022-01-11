@@ -1,9 +1,9 @@
 
 ## To Run
 - Clone repository
-  - 'git@github.com:aventurino13/service-catalog.git'
+  - `'git@github.com:aventurino13/service-catalog.git'`
 - Run App
-- ```run docker-compose up --build -V```
+- `run docker-compose up --build -V`
 
 # Design Considerations
 
