@@ -155,6 +155,7 @@ curl --location --request PATCH 'http://localhost:3000/service-catalog/service/7
 - Right now all the endpoints are returning Service entity Db objects. I would like to convert them to returning DTOs to the controller
 - Right now all the search/filter functionality is separated out into different endpoints. I would like combine the search functionality into a single search with dynamic options - so you could search by multiple fields and sort the results as desired 
 - I started looking into passport authorization - seems like this is a good tool for nest for providing some user/password as well as JWT authorization.
+- It would also be nice to setup some logging. I think you can use middleware to setup logging for reach request and response.
 
 ## Work Log
    - Created a new nest project 
