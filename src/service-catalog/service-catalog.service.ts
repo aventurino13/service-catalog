@@ -13,6 +13,8 @@ import { classToPlain, instanceToPlain, plainToClass } from 'class-transformer';
 import CreateVersionDto from './dto/createVersionDto';
 import CreateServiceDto from './dto/createServiceDto';
 import GetVersionResponseDto from './dto/getVersionResponseDto';
+import { versions } from 'process';
+import UpdateServiceDto from './dto/updateServiceDto';
 
 @Injectable()
 export class ServiceCatalogService {
@@ -22,37 +24,6 @@ export class ServiceCatalogService {
     @InjectRepository(Service)
     private readonly serviceRepository: Repository<Service>,
   ) {}
-
-  async getAllServices(): Promise<Service[]> {
-    return await this.serviceRepository.find();
-  }
-
-  async getRecentServices(): Promise<Service[]> {
-    return await this.serviceRepository.find({
-      order: {
-        created_date: 'DESC',
-      },
-    });
-  }
-
-  async getPaginatedServices(
-    offset?: number,
-    limit?: number,
-  ): Promise<Service[]> {
-    const services = await this.serviceRepository.find({
-      order: {
-        created_date: 'ASC',
-      },
-      skip: offset,
-      take: limit,
-    });
-
-    if(services.length < 1) {
-      throw new NotFoundException();
-    }
-
-    return services;
-  }
 
   async getServiceById(serviceId: number): Promise<Service> {
     const matchedService = await this.serviceRepository.findOne({
@@ -82,6 +53,42 @@ export class ServiceCatalogService {
     return matchedService;
   }
 
+  async getRecentServices(): Promise<Service[]> {
+    return await this.serviceRepository.find({
+      order: {
+        created_date: 'DESC',
+      },
+    });
+  }
+
+  async getPaginatedServices(
+    offset?: number,
+    limit?: number,
+  ): Promise<Service[]> {
+    const services = await this.serviceRepository.find({
+      order: {
+        created_date: 'DESC',
+      },
+      skip: offset,
+      take: limit,
+    });
+
+    if (services.length < 1) {
+      throw new NotFoundException();
+    }
+
+    return services;
+  }
+
+  async getAllServices(): Promise<Service[]> {
+    const services = await this.serviceRepository.find();
+    if (services.length < 1) {
+      throw new NotFoundException();
+    }
+
+    return services;
+  }
+
   async create(serviceDetails: CreateServiceDto): Promise<Service> {
     const newVersion = new Version();
     newVersion.versionNumber = serviceDetails.version;
@@ -93,6 +100,23 @@ export class ServiceCatalogService {
     newService.versions = [newVersion];
 
     return await this.serviceRepository.save(newService);
+  }
+
+  async updateService(serviceId: number, service: UpdateServiceDto) {
+    const matchedService = await this.serviceRepository.findOne({
+      where: {
+        id: serviceId,
+      },
+      relations: ['versions'],
+    });
+
+    if (!matchedService) {
+      throw new NotFoundException();
+    }
+
+    await this.serviceRepository.update(serviceId, service);
+
+    return this.serviceRepository.findOne(serviceId);
   }
 
   async createVersion(versionDetails: CreateVersionDto): Promise<Service> {

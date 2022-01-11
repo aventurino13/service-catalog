@@ -19,7 +19,7 @@ import { Service } from './service-catalog/entity/service.entity';
         port: configService.get<number>('POSTGRES_PORT', 5432),
         username: configService.get('DATABASE_USER', 'postgres'),
         password: configService.get('DATABASE_PASSWORD', 'postgres'),
-        database: configService.get('DATABASE_NAME', 'prism'),
+        database: configService.get('DATABASE_NAME', 'service_catalog'),
         entities: [Service, Version],
       }),
     }),

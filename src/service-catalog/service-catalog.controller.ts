@@ -7,6 +7,7 @@ import {
   Post,
   ValidationPipe,
   Query,
+  Patch,
 } from '@nestjs/common';
 import CreateServiceDto from 'src/service-catalog/dto/createServiceDto';
 import GetServiceResponseDto from 'src/service-catalog/dto/getVersionResponseDto';
@@ -15,6 +16,7 @@ import PaginationParams from './dto/paginationParamsDto';
 import { Service } from 'src/service-catalog/entity/service.entity';
 import { Version } from 'src/service-catalog/entity/version.entity';
 import { ServiceCatalogService } from './service-catalog.service';
+import UpdateServiceDto from './dto/updateServiceDto';
 
 @Controller('service-catalog')
 export class ServiceCatalogController {
@@ -47,11 +49,21 @@ export class ServiceCatalogController {
     return this.serviceCatalogService.getPaginatedServices(offset, limit);
   }
 
+  //GET /service-catalog
   @Get()
   getAllServices(): Promise<Service[]> {
     return this.serviceCatalogService.getAllServices();
   }
 
+  @Patch('/service/:id')
+  updateService(
+    @Param('id') serviceId: number,
+    @Body() service: UpdateServiceDto,
+  ) {
+    return this.serviceCatalogService.updateService(serviceId, service);
+  }
+
+  //POST /service-catalog/service
   @Post('/service')
   createService(
     @Body(new ValidationPipe()) service: CreateServiceDto,
@@ -59,6 +71,7 @@ export class ServiceCatalogController {
     return this.serviceCatalogService.create(service);
   }
 
+  //POST /service-catalog/version
   @Post('/version')
   createVersion(
     @Body(new ValidationPipe()) version: CreateVersionDto,

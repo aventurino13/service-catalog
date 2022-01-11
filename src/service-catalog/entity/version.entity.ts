@@ -21,6 +21,7 @@ export class Version {
   created_date: Date;
   @ManyToOne(() => Service, (service) => service.versions, {
     onUpdate: 'CASCADE',
+    onDelete: 'CASCADE',
   })
   service: Service;
 }

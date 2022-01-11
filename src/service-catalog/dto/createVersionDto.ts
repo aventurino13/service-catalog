@@ -1,5 +1,6 @@
-import { IsNumber, Min  } from 'class-validator';
-import { Type } from 'class-transformer';
+import { IsNumber, Min, IsBoolean } from 'class-validator';
+import { Type, Transform } from 'class-transformer';
+import { Optional } from '@nestjs/common';
 
 export default class CreateVersionDto {
   @Type(() => Number)
