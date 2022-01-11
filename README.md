@@ -3,7 +3,7 @@
 - Clone repository
   - `git clone git@github.com:aventurino13/service-catalog.git`
 - Run App
-- `run docker-compose up --build -V`
+  - `run docker-compose up --build -V`
 
 # Design Considerations
 
@@ -14,48 +14,42 @@
 
 ## Domains
 - *Service* which contains multiple versions
-    - Id (Auto generated column) 
+    - Id (Auto generated column, Number) 
       - After more consideration I would probably change this type to a UUID so that if we moved to a new database it wouldn't just be an incremented number and would be more unique
-    - Name
-    - Description
-    - Created_Date
+    - Name (String)
+    - Description (String)
+    - Created_Date (Auto generated Date)
     - One to Many → Versions
     
 - *Version* which is belongs to a service
-    - Id (Auto generated column)
-    - VersionNumber
-    - isActive
+    - Id (Auto generated column, number)
+      - I would also consider updating this to a UUID instead of a number
+    - VersionNumber (Number)
+    - isActive (boolean)
         - Added this considering that there would be many versions for a given service and this would indicate which one is the current version. After more consideration I probably should have switched this to 'lastest' flag instead of active.
-    - CreatedDate 
-    - Many to One relation to service the version belongs to 
+    - Created_Date (Auto generated Date)
+    - Many to One → Service it belongs to
 
 ## Controllers 
 
 - Post Service (  /service-catalog/service ) 
     - Params: CreateServiceDto
-        - Name
-        - Description
-        - Version
+        - Name (string)
+        - Description (String)
+        - Version (Number)
     - Creates a new service and version based on inputs and returns the created service and version
     - Returns newly created service and version
-- Curl: `curl --location --request POST 'http://localhost:3000/service-catalog/service' \
---header 'Content-Type: application/x-www-form-urlencoded' \
---data-urlencode 'name=<name>' \
---data-urlencode 'description=<description>' \
---data-urlencode 'version=<version as number>'`
+- Curl: `curl --location --request POST 'http://localhost:3000/service-catalog/service' --header 'Content-Type: application/x-www-form-urlencoded' --data-urlencode 'name=<name>' --data-urlencode 'description=<description>' --data-urlencode 'version=<version as number>'`
 
 - Post Version ( /service-catalog/version ) 
     - Params: CreateVersionDto
-        - serviceId (Number)
-        - version (Number)
+        - serviceId (Number, Min 1)
+        - version (Number, Min 1)
     - Creates a new version with the given version name for service id that was passed in. 
     - Deactivates all other versions for service id so that there is only one active version for a given service. In the real world we would probably want to have more than one active version for backwards compatability but I wanted to add some business logic and play with the TYPE orm queries so I added this here. 
     - Returns a 404 if no service is found for given service id
     - Returns service with all versions including newly added version
-  - Curl: `curl --location --request POST 'http://localhost:3000/service-catalog/version' \
---header 'Content-Type: application/x-www-form-urlencoded' \
---data-urlencode 'serviceId=<service id number>' \
---data-urlencode 'version=<new version number>'`
+  - Curl: `curl --location --request POST 'http://localhost:3000/service-catalog/version' --header 'Content-Type: application/x-www-form-urlencoded' --data-urlencode 'serviceId=<serviceId>' --data-urlencode 'version=<nnewVersionNumber>'`
 
 
 - Get Service by Id ( /service-catalog/id/[id] ) 
@@ -96,16 +90,17 @@
     - Updates the service with given id.
     - Returns 404 if no service is found for given id
     - Returns Updated Service
-  - Curl: `curl --location --request PATCH 'http://localhost:3000/service-catalog/service/<serviceId>' \
---header 'Content-Type: application/x-www-form-urlencoded' \
---data-urlencode 'name=<newName>' \
---data-urlencode 'description=<newDescription>'`
+  - Curl: `curl --location --request PATCH 'http://localhost:3000/service-catalog/service/<serviceId>' --header 'Content-Type: application/x-www-form-urlencoded' --data-urlencode 'name=<newName>' --data-urlencode 'description=<newDescription>'`
 
 
 
 # TO DO
 - I wanted the app to be easy to run so the DB credentials are in the env file - in the real world I would never check in the database credentials but for usability I did in this example 
 - Add unit tests for all of the methods in the service
+  - I would want these tests to test the specific methods themselves
+  - Ex the could test the validation of input values
+- I would also like to add API tests - these would test the API end to end
+  - Ex: Stage data in DB so that there is an existing service (I have used DB Unit in the past for Java) and have test that verifies you can update the existing service, add version etc. 
 - Right now all the endpoints are returning Service entity Db objects. I would like to convert them to returning DTOs to the controller
 - Right now all the search/filter functionality is separated out into different endpoints. I would like combine the search functionality into a single search with dynamic options - so you could search by multiple fields and sort the results as desired 
 - I started looking into passport authorization - seems like this is a good tool for nest for providing some user/password as well as JWT authorization.
