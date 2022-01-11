@@ -77,9 +77,45 @@
 
 
 # TO DO
- - Right now all the endpoints are returning Service entity Db objects. I would like to convert them to returning DTOs to the controller
+- Add unit tests for all of the methods in the service
+- Right now all the endpoints are returning Service entity Db objects. I would like to convert them to returning DTOs to the controller
 - Right now all the search/filter functionality is separated out into different endpoints. I would like combine the search functionality into a single search with dynamic options - so you could search by multiple fields and sort the results as desired 
 - Update the docker file to have a prod build stage so that images deployed to production are smaller and do not have all the unneeded dev dependencies 
+
+## Work Log
+   - Created a new nest project 
+    - Used npm for a package manager as this is what I have some experience with 
+    - Verified I could start the app with ```npm run start:dev```
+   - View app at http://localhost:3000 
+   - Used nest generate to create the following
+    - Controller
+    - interface 
+    - Service
+   - Exporting the service from within the module make it so that any service that uses the module can also access the service
+   - In order for the app to have access to the new module we must add it to the main app module 
+   - @Param from nest allows us to access route params in our method 
+   - @body → parses the http body (nest runs JSON.parse() ) to provide JSON object to controller
+
+   - Next I want to setup connection to the DB. My current development workflow uses docker so I am going to dockerize the application and run the DB in docker so that I do not have to run the DB locally
+    - Dockerizing - https://blog.logrocket.com/containerized-development-nestjs-docker/ 
+        - Make sure npm install command is after we load package.json so that it only runs if these files change 
+        - Because we added `- /usr/src/app/node_modules`  and anonymous volume - To make sure new npm packages are added to docker context you must run  
+        - To run `docker-compose up --build -V`
+            - -V removes anonymous volumes and adds them again
+   - Installed TypeORM with pg
+   - npm install --save dotenv to load form env vars 
+   - Ran into some trouble getting the DB connection - 
+    - tried a couple of different online tutorials used this example configuration with env vars 
+        - https://jaketrent.com/post/configure-typeorm-inject-nestjs-config 
+   - Spent a lot of time messing with the configuration - but it ended up being that my DB container wasn't starting at all. I had an issue with space in docker volumes so pruning and restarting allowed the connection to work 
+
+   - Setting up the service and version entities 
+    - Following this example - https://github.com/typeorm/typeorm/blob/master/docs/many-to-one-one-to-many-relations.md
+        - To map the One To Many (service) and the many to one (version) entities 
+        - This should give me a serviceId foreign key in versions table to tie all the versions to a specific service
+  - Next started with the work of the service API 
+
+
 
 
 
