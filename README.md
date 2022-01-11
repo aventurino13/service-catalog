@@ -59,6 +59,7 @@ curl --location --request PATCH 'http://localhost:3000/service-catalog/service/7
 # Design Considerations
 
 ## Database
+- I wanted the app to be easy to run so the DB credentials are in the env file - in the real world I would never check in the database credentials but for usability I did in this example 
 - Currently the database is dynamically generated and synchronized with TypeORM entities
 - In the future I would like to create DB migrations which would generate the DB structure based on the migration files instead of synchronizing with any changes in the entities themselves. This way there is version control for the schemas 
     - When this is done I would have to update the TypeORM config syncronize setting to false
@@ -145,8 +146,7 @@ curl --location --request PATCH 'http://localhost:3000/service-catalog/service/7
 
 
 
-# TO DO
-- I wanted the app to be easy to run so the DB credentials are in the env file - in the real world I would never check in the database credentials but for usability I did in this example 
+# Compromises / Future Goals
 - Add unit tests for all of the methods in the service
   - I would want these tests to test the specific methods themselves
   - Ex the could test the validation of input values
