@@ -39,11 +39,11 @@
     - Creates a new service and version based on inputs and returns the created service and version
     - Returns newly created service and version
 - Curl:
-```curl --location --request POST 'http://localhost:3000/service-catalog/service' \
+`curl --location --request POST 'http://localhost:3000/service-catalog/service' \
 --header 'Content-Type: application/x-www-form-urlencoded' \
 --data-urlencode 'name=<name>' \
 --data-urlencode 'description=<description>' \
---data-urlencode 'version=<version as number>'```
+--data-urlencode 'version=<version as number>'`
 
 - Post Version ( /service-catalog/version ) 
     - Params: CreateVersionDto
@@ -54,10 +54,10 @@
     - Returns a 404 if no service is found for given service id
     - Returns service with all versions including newly added version
   - Curl:
-```curl --location --request POST 'http://localhost:3000/service-catalog/version' \
+`curl --location --request POST 'http://localhost:3000/service-catalog/version' \
 --header 'Content-Type: application/x-www-form-urlencoded' \
 --data-urlencode 'serviceId=<service id number>' \
---data-urlencode 'version=<new version number>'```
+--data-urlencode 'version=<new version number>'`
 
 
 - Get Service by Id ( /service-catalog/id/[id] ) 
@@ -104,10 +104,10 @@
     - Returns 404 if no service is found for given id
     - Returns Updated Service
   - Curl
-  ```curl --location --request PATCH 'http://localhost:3000/service-catalog/service/<serviceId>' \
+  `curl --location --request PATCH 'http://localhost:3000/service-catalog/service/<serviceId>' \
 --header 'Content-Type: application/x-www-form-urlencoded' \
 --data-urlencode 'name=<newName>' \
---data-urlencode 'description=<newDescription>'```
+--data-urlencode 'description=<newDescription>'`
 
 
 
