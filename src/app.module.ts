@@ -21,6 +21,7 @@ import { Service } from './service-catalog/entity/service.entity';
         password: configService.get('DATABASE_PASSWORD', 'postgres'),
         database: configService.get('DATABASE_NAME', 'service_catalog'),
         entities: [Service, Version],
+        synchronize: true,
       }),
     }),
     ServiceCatalogModule,
