@@ -55,6 +55,7 @@ export class ServiceCatalogController {
     return this.serviceCatalogService.getAllServices();
   }
 
+  //PATCH /service-catalog/service/:id
   @Patch('/service/:id')
   updateService(
     @Param('id') serviceId: number,
