@@ -5,6 +5,57 @@
 - Run App
   - `run docker-compose up --build -V`
 
+## Quick Guide for Using API
+Add three services 
+```
+curl --location --request POST 'http://localhost:3000/service-catalog/service' --header 'Content-Type: application/x-www-form-urlencoded' --data-urlencode 'name=service1' --data-urlencode 'description=description1' --data-urlencode 'version=1'
+```
+
+```
+curl --location --request POST 'http://localhost:3000/service-catalog/service' --header 'Content-Type: application/x-www-form-urlencoded' --data-urlencode 'name=service2' --data-urlencode 'description=description2' --data-urlencode 'version=1'
+```
+
+```
+curl --location --request POST 'http://localhost:3000/service-catalog/service' --header 'Content-Type: application/x-www-form-urlencoded' --data-urlencode 'name=Different Service Name' --data-urlencode 'description=description3' --data-urlencode 'version=1'
+```
+
+Get All Newly Created Services
+```
+curl --location --request GET 'http://localhost:3000/service-catalog'
+```
+
+
+Add a new version to existing service (use returned id from one of the calls above)
+```
+curl --location --request POST 'http://localhost:3000/service-catalog/version' --header 'Content-Type: application/x-www-form-urlencoded' --data-urlencode 'serviceId=<ServiceId>' --data-urlencode 'version=2'
+```
+
+
+Get a service by ID (use returned id from one of the calls above)
+```
+curl --location --request GET 'http://localhost:3000/service-catalog/id/<serviceId>'
+```
+
+Search for service by name (Should only return third service added above)
+```
+curl --location --request GET 'http://localhost:3000/service-catalog/name/Different'
+```
+
+Get services sorted by most recent
+```
+curl --location --request GET 'http://localhost:3000/service-catalog/recent'
+```
+
+Get only service2 using offset(1) and limit(1)
+```
+curl --location --request GET 'http://localhost:3000/service-catalog/paginated?offset=1&limit=1'
+```
+
+Update Existing Service (use returned id from one of the calls above)
+```
+curl --location --request PATCH 'http://localhost:3000/service-catalog/service/7' --header 'Content-Type: application/x-www-form-urlencoded' --data-urlencode 'name=New Name' --data-urlencode 'description=New Description'
+```
+
 # Design Considerations
 
 ## Database
@@ -49,7 +100,7 @@
     - Deactivates all other versions for service id so that there is only one active version for a given service. In the real world we would probably want to have more than one active version for backwards compatability but I wanted to add some business logic and play with the TYPE orm queries so I added this here. 
     - Returns a 404 if no service is found for given service id
     - Returns service with all versions including newly added version
-  - Curl: `curl --location --request POST 'http://localhost:3000/service-catalog/version' --header 'Content-Type: application/x-www-form-urlencoded' --data-urlencode 'serviceId=<serviceId>' --data-urlencode 'version=<nnewVersionNumber>'`
+  - Curl: `curl --location --request POST 'http://localhost:3000/service-catalog/version' --header 'Content-Type: application/x-www-form-urlencoded' --data-urlencode 'serviceId=<serviceId>' --data-urlencode 'version=<newVersionNumber>'`
 
 
 - Get Service by Id ( /service-catalog/id/[id] ) 
