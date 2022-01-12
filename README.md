@@ -89,60 +89,62 @@ curl --location --request PATCH 'http://localhost:3000/service-catalog/service/7
         - Name (string)
         - Description (String)
         - Version (Number)
-    - Creates a new service and version based on inputs and returns the created service and version
-    - Returns newly created service and version
-- Curl: `curl --location --request POST 'http://localhost:3000/service-catalog/service' --header 'Content-Type: application/x-www-form-urlencoded' --data-urlencode 'name=<name>' --data-urlencode 'description=<description>' --data-urlencode 'version=<version as number>'`
+            - Creates a new service and version based on inputs and returns the created service and version
+            - Returns newly created service and version
+              - Curl: `curl --location --request POST 'http://localhost:3000/service-catalog/service' --header 'Content-Type: application/x-www-form-urlencoded' --data-urlencode 'name=<name>' --data-urlencode 'description=<description>' --data-urlencode 'version=<version as number>'`
 
 - Post Version ( /service-catalog/version ) 
     - Params: CreateVersionDto
         - serviceId (Number, Min 1)
         - version (Number, Min 1)
-    - Creates a new version with the given version name for service id that was passed in. 
-    - Deactivates all other versions for service id so that there is only one active version for a given service. In the real world we would probably want to have more than one active version for backwards compatability but I wanted to add some business logic and play with the TYPE orm queries so I added this here. 
-    - Returns a 404 if no service is found for given service id
-    - Returns service with all versions including newly added version
-  - Curl: `curl --location --request POST 'http://localhost:3000/service-catalog/version' --header 'Content-Type: application/x-www-form-urlencoded' --data-urlencode 'serviceId=<serviceId>' --data-urlencode 'version=<newVersionNumber>'`
+          - Creates a new version with the given version name for service id that was passed in. 
+          - Returns service with all versions including newly added version
+          - Returns a 404 if no service is found for given service id
+          - ADDITIONAL LOGIC: Deactivates all other versions for service id so that there is only one active version for a given service. In the real world we would probably want to have more than one active version for backwards compatability but I wanted to add some business logic and play with the TYPE orm queries so I added this here. Also as mentioned about it would probably be good to switch this to a latest flag. 
+            - Curl: `curl --location --request POST 'http://localhost:3000/service-catalog/version' --header 'Content-Type: application/x-www-form-urlencoded' --data-urlencode 'serviceId=<serviceId>' --data-urlencode 'version=<newVersionNumber>'`
 
 
 - Get Service by Id ( /service-catalog/id/[id] ) 
-    - Search for specific service with it’s details including version
-    - Returns 404 if service is not found
-    - Right now I am using the primary key for identifying a service. Since I know it is not ideal to expose primary keys in the future I would update this to use a uniquely generated id to identify each service. 
-  - Curl: `curl --location --request GET 'http://localhost:3000/service-catalog/id/<serviceId>'`
+  - Params: id: Service.id (Primary Key, number)
+      - Returns a single servces with it’s details including version with serviceId from request
+      - Returns 404 if service is not found
+      - Right now I am using the primary key for identifying a service. I don't think it is ideal to expose simple icremented primary keys in the future I would update this to use a uniquely generated id to identify each service like a UUID. 
+        - Curl: `curl --location --request GET 'http://localhost:3000/service-catalog/id/<serviceId>'`
 
 - Get Service by Name ( /service-catalog/name/[name] ) 
+  - Params: name: search(string)
     - Searches for services with name like search name param passed in
-    - Returns all services and respective details which contain search param
+    - Returns all services and respective details which with name like name in search param
     - Returns 404 if no services match param 
-  - Curl: `curl --location --request GET 'http://localhost:3000/service-catalog/name/<searchName>'`
+        - Curl: `curl --location --request GET 'http://localhost:3000/service-catalog/name/<searchName>'`
 
 - Get Recent Services ( /service-catalog/recent ) 
     - Gets all services ordered by service creation_date starting with most recent 
- - Curl: `curl --location --request GET 'http://localhost:3000/service-catalog/recent'`
+        - Curl: `curl --location --request GET 'http://localhost:3000/service-catalog/recent'`
 
 - Get Paginated Services ( /service-catalog/paginated )
     - Params:
         - Offset (Optional, number, must be greater than 0 ) 
         - Limit (Optional, number, must be greater than 1) 
-    - Returns a set list of services with given length if given (limit) starting with the newest service based on the starting point if given(offset) 
-    - Returns 404 if no services are found
-    - Returns 400 if the search params are invalid
-    - Curl: `curl --location --request GET 'http://localhost:3000/service-catalog/paginated?offset=<offsetValue>&limit=<limitValue>'`
+          - Returns a set list of services with given length if given (limit) starting with the newest service based on the starting point if given (offset) 
+          - Returns 404 if no services are found
+          - Returns 400 if the search params are invalid
+            - Curl: `curl --location --request GET 'http://localhost:3000/service-catalog/paginated?offset=<offsetValue>&limit=<limitValue>'`
 
 - Get All Services ( /service-catalog )
     - Returns all services in the DB with their version details
     - Returns 404 if no services are found
     - In the future I would like to update this to only return the latest version of the service. This would mean I would switch the isActive flag to latest and then only return the service + latest version
-  - Curl: `curl --location --request GET 'http://localhost:3000/service-catalog'`
+      - Curl: `curl --location --request GET 'http://localhost:3000/service-catalog'`
 
 - Patch Service ( /service-catalog/service/:id )
     - Params: UpdateServiceDto
         - Name
         - Description
-    - Updates the service with given id.
-    - Returns 404 if no service is found for given id
-    - Returns Updated Service
-  - Curl: `curl --location --request PATCH 'http://localhost:3000/service-catalog/service/<serviceId>' --header 'Content-Type: application/x-www-form-urlencoded' --data-urlencode 'name=<newName>' --data-urlencode 'description=<newDescription>'`
+          - Updates the service with given id.
+          - Returns 404 if no service is found for given id
+          - Returns Updated Service details 
+              - Curl: `curl --location --request PATCH 'http://localhost:3000/service-catalog/service/<serviceId>' --header 'Content-Type: application/x-www-form-urlencoded' --data-urlencode 'name=<newName>' --data-urlencode 'description=<newDescription>'`
 
 
 
