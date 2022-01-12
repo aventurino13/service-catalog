@@ -8,52 +8,52 @@
 ## Quick Guide for Using API
 POST three services 
 ```
-curl --location --request POST 'http://localhost:3000/service-catalog/service' --header 'Content-Type: application/x-www-form-urlencoded' --data-urlencode 'name=service1' --data-urlencode 'description=description1' --data-urlencode 'version=1'
+curl -X POST "localhost:3000/service-catalog/service" -H "Content-Type: application/json" --data '{ "name" : "service1", "description" : "description1", "version": "1" }'
 ```
 
 ```
-curl --location --request POST 'http://localhost:3000/service-catalog/service' --header 'Content-Type: application/x-www-form-urlencoded' --data-urlencode 'name=service2' --data-urlencode 'description=description2' --data-urlencode 'version=1'
+curl -X POST "localhost:3000/service-catalog/service" -H "Content-Type: application/json" --data '{ "name" : "service2", "description" : "description2", "version": "1" }'
 ```
 
 ```
-curl --location --request POST 'http://localhost:3000/service-catalog/service' --header 'Content-Type: application/x-www-form-urlencoded' --data-urlencode 'name=Different Service Name' --data-urlencode 'description=description3' --data-urlencode 'version=1'
+curl -X POST "localhost:3000/service-catalog/service" -H "Content-Type: application/json" --data '{ "name" : "Different Service Name", "description" : "description3", "version": "1" }'
 ```
 
 Get All Services 
 ```
-curl --location --request GET 'http://localhost:3000/service-catalog'
+curl 'http://localhost:3000/service-catalog'
 ```
 
 
 POST a new version to existing service (use returned id from one of the calls above)
 ```
-curl --location --request POST 'http://localhost:3000/service-catalog/version' --header 'Content-Type: application/x-www-form-urlencoded' --data-urlencode 'serviceId=<ServiceId>' --data-urlencode 'version=2'
+curl -X POST "http://localhost:3000/service-catalog/version" -H "Content-Type: application/json" --data '{ "serviceId" : "<serviceId>", "version": "2" }'
 ```
 
 
 GET a service by ID (use returned id from one of the calls above)
 ```
-curl --location --request GET 'http://localhost:3000/service-catalog/id/<serviceId>'
+curl 'http://localhost:3000/service-catalog/id/<serviceId>'
 ```
 
 GET services name (Call below should only return third service added above - but will return all matched services if multiple)
 ```
-curl --location --request GET 'http://localhost:3000/service-catalog/name/Different'
+curl 'http://localhost:3000/service-catalog/name/Different'
 ```
 
 GET services sorted by most recent
 ```
-curl --location --request GET 'http://localhost:3000/service-catalog/recent'
+curl 'http://localhost:3000/service-catalog/recent'
 ```
 
 GET paginated services (below will return only service2 by setting offset(1) and limit(1) ) 
 ```
-curl --location --request GET 'http://localhost:3000/service-catalog/paginated?offset=1&limit=1'
+curl 'http://localhost:3000/service-catalog/paginated?offset=1&limit=1'
 ```
 
 PATCH Existing Service (use returned id from one of the calls above)
 ```
-curl --location --request PATCH 'http://localhost:3000/service-catalog/service/7' --header 'Content-Type: application/x-www-form-urlencoded' --data-urlencode 'name=New Name' --data-urlencode 'description=New Description'
+curl -X PATCH "http://localhost:3000/service-catalog/service/<serviceId>" -H "Content-Type: application/json" --data '{ "name" : "New Name", "description": "New Description" }'
 ```
 
 # Design Considerations
