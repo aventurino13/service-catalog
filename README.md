@@ -3,7 +3,7 @@
 - Clone repository
   - `git clone git@github.com:aventurino13/service-catalog.git`
 - Run App
-  - `run docker-compose up --build -V`
+  - `docker-compose up --build -V`
 
 ## Quick Guide for Using API
 POST three services 
